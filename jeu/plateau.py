@@ -60,3 +60,27 @@ class Plateau:
 
     def reste_navire_a_placer(self):
         return len(self.navires_a_placer) > 0
+
+    def recevoir_tir(self, ligne, colonne):
+        if (ligne, colonne) in self.tirs:
+            return False
+        
+        self.tirs.add((ligne, colonne))
+        presence_navire = self.grille[ligne][colonne]
+        
+        if presence_navire:
+            navire = presence_navire
+            navire.degats.append((ligne, colonne))
+            if len(navire.degats) == navire.taille:
+                navire.etat = "detruit"
+            return True
+        return False
+
+    def tous_navires_detruits(self):
+        return all(navire.etat == "detruit" for navire in self.navires)
+    
+    def compter_navires_restants(self):
+        return len([navire for navire in self.navires if navire.etat != "detruit"])
+
+    def compter_navires_detruits(self):
+        return len([navire for navire in self.navires if navire.etat == "detruit"])
