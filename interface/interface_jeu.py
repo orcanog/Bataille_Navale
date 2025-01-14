@@ -1,5 +1,5 @@
 import tkinter as tk
-from divers.parametres import NAVIRE_ASSETS, TIR_REUSSI_ASSET, TIR_MANQUE_ASSET, EAU_ASSET
+from divers.parametres import NAVIRE_ASSETS, NAVIRE_DETRUIT, TIR_REUSSI_ASSET, TIR_MANQUE_ASSET, EAU_ASSET
 from interface.gestionnaire_joueurs import GestionnaireJoueurs
 from interface.interface_info import InterfaceInfo
 
@@ -89,14 +89,41 @@ class InterfaceJeu(tk.Frame):
         self.cadre_ordinateur.grid(row=0, column=3)
         self.cadre_ordinateur.grid_remove()
 
+    # Méthode pour dessiner une croix rouge sur le canvas
+    def dessiner_croix(self, canvas):
+        taille = 30
+        marge = 6
+        canvas.create_line(marge, marge, taille-marge, taille-marge, 
+                          fill=TIR_REUSSI_ASSET, width=2)
+        canvas.create_line(taille-marge, marge, marge, taille-marge, 
+                          fill=TIR_REUSSI_ASSET, width=2)
+
+    # Méthode pour dessiner un cercle bleu sur le canvas
+    def dessiner_cercle(self, canvas):
+        taille = 30
+        marge = 6
+        canvas.create_oval(marge, marge, taille-marge, taille-marge, 
+                          outline=TIR_MANQUE_ASSET, width=2)
+
     # Méthode pour mettre à jour l'affichage des cases des grilles
     def mettre_a_jour_case(self, canvas, position, plateau, montrer_navires=True):
         i, j = position
+        
         if (i, j) in plateau.tirs:
             if plateau.grille[i][j]:
-                canvas.configure(bg=TIR_REUSSI_ASSET)
+                navire = plateau.grille[i][j]
+                 # Si le navire est détruit, on affiche ses cases en noir
+                if navire.est_detruit():
+                    self.dessiner_croix(canvas)
+                    canvas.configure(bg=NAVIRE_DETRUIT)
+                # Si le tir touche un navire, on affiche un cercle rouge
+                else:
+                    self.dessiner_croix(canvas)
+            # Si le tir rate, on affiche un cercle bleu
             else:
-                canvas.configure(bg=TIR_MANQUE_ASSET)
+                self.dessiner_cercle(canvas)
+
+        # Partie du code qui affiche les navires sur la grille et l'eau (en blanc)
         elif plateau.grille[i][j] and montrer_navires:
             navire = plateau.grille[i][j]
             canvas.configure(bg=NAVIRE_ASSETS[navire.nom])
@@ -145,7 +172,7 @@ class InterfaceJeu(tk.Frame):
                         self.gestionnaire.plateau_joueur.navires_a_placer.pop(i)
                         break
                         
-                self.interface.mettre_a_jour_affichage()
+                self.mettre_a_jour_affichage()
                 self.interface.mettre_a_jour_compteurs()
                 
                 if not self.gestionnaire.compter_navires_disponibles(self.interface.navire_selectionne):

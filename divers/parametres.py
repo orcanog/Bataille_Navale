@@ -1,10 +1,11 @@
 NAVIRE_ASSETS = {
-    "Porte-avions": "#505050",
-    "Croiseur": "#404040",
-    "Destroyeur": "#303030",
-    "Sous-marin": "#101010"
+    "Porte-avions": "#909090",
+    "Croiseur": "#707070",
+    "Destroyeur": "#505050",
+    "Sous-marin": "#303030"
 }
 
+NAVIRE_DETRUIT = "black"
 TIR_REUSSI_ASSET = "red"
 TIR_MANQUE_ASSET = "blue"
 EAU_ASSET = "white"
